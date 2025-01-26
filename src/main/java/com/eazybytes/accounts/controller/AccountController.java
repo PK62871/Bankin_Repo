@@ -26,13 +26,13 @@ public class AccountController {
 
 
 
-//    @PostMapping("/create")
-//    public ResponseEntity<ResponseDto> createAccount(@RequestBody CustomerDto customerDto){
-//
-//        iAccountService.createAccount(customerDto);
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body(new ResponseDto(AccountConstant.STATUS_201,AccountConstant.MESSAGE_201));
-//
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<ResponseDto> createAccount(@RequestBody CustomerDto customerDto){
+
+        iAccountService.createAccount(customerDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseDto(AccountConstant.STATUS_201,AccountConstant.MESSAGE_201));
+
+    }
 
 }
