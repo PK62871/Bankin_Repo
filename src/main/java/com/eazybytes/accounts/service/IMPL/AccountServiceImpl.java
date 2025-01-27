@@ -1,15 +1,18 @@
 package com.eazybytes.accounts.service.IMPL;
 
+import com.eazybytes.accounts.Dto.AccountDto;
 import com.eazybytes.accounts.Dto.CustomerDto;
 import com.eazybytes.accounts.constant.AccountConstant;
 import com.eazybytes.accounts.entity.Accounts;
 import com.eazybytes.accounts.entity.Customer;
 import com.eazybytes.accounts.exception.CustomerAlreadyExistException;
+import com.eazybytes.accounts.exception.ResourceNotFoundException;
+import com.eazybytes.accounts.mapper.AccountsMapper;
 import com.eazybytes.accounts.mapper.CustomerMapper;
 import com.eazybytes.accounts.repository.AccountRepo;
 import com.eazybytes.accounts.repository.CustomerRepo;
 import com.eazybytes.accounts.service.IAccountService;
-import lombok.AllArgsConstructor;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +46,7 @@ public class AccountServiceImpl implements IAccountService {
         }
 
         customer.setCreatedAt(LocalDateTime.now());
-        customer.setCreateBy("Prabhakar");
+        customer.setCreatedBy("Prabhakar");
         Customer savedCustomer = customerRepo.save(customer);
 
         accountRepo.save(createNewAccount(savedCustomer));
@@ -51,17 +54,69 @@ public class AccountServiceImpl implements IAccountService {
     }
 
 
+    /**
+     * @param mobileNumber
+     * @return
+     */
+    @Override
+    public CustomerDto fetchAccount(String mobileNumber) {
+
+        Customer customer = customerRepo.findByMobileNumber(mobileNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer","MobileNumber",mobileNumber));
+
+       Accounts account =  accountRepo.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                ()-> new ResourceNotFoundException("Account","CustomerId",customer.getCustomerId().toString())
+        );
+
+        CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+        customerDto.setAccountDto(AccountsMapper.mapToAccountDto(account,new AccountDto()));
+
+        return customerDto;
+    }
+
+    /**
+     * @param customerDto
+     * @return
+     */
+    @Override
+    public boolean updateAccount(CustomerDto customerDto) {
+
+        boolean isUpdated = false;
+
+        AccountDto accountDto = customerDto.getAccountDto();
+
+        if(accountDto != null){
+            Accounts accounts = accountRepo.findById(accountDto.getAccountNumber()).orElseThrow(
+                    ()-> new ResourceNotFoundException("Account","AccountNumber",accountDto.getAccountNumber().toString())
+            );
+
+            Accounts accounts1 = AccountsMapper.mapToAccounts(accountDto, new Accounts());
+            accountRepo.save(accounts1);
+
+            Long customerId = accounts.getCustomerId();
+            Customer customer = customerRepo.findById(customerId).orElseThrow(
+                    ()-> new ResourceNotFoundException("Customer","CustomerId",customerId.toString())
+            );
+
+            Customer customer1 = CustomerMapper.mapToCustomer(customerDto, new Customer());
+            customerRepo.save(customer1);
+            isUpdated= true;
+        }
+        return isUpdated;
+    }
+
+
     private Accounts createNewAccount(Customer customer){
         Accounts newAccounts = new Accounts();
 
-        newAccounts.setCustomerId(String.valueOf(customer.getCustomerId()));
+        newAccounts.setCustomerId(customer.getCustomerId());
         long randomNumber = 1000000000L + new Random().nextInt();
 
         newAccounts.setAccountNumber(randomNumber);
         newAccounts.setAccountType(AccountConstant.SAVINGS);
         newAccounts.setBranchAddress(AccountConstant.ADDRESS);
-        newAccounts.setCreateBy("Prabhakar");
-        newAccounts.setCreateBy("Prabhakar");
+        newAccounts.setCreatedBy("Prabhakar");
+        newAccounts.setCreatedBy("Prabhakar");
         newAccounts.setCreatedAt(LocalDateTime.now());
         return  newAccounts;
     }

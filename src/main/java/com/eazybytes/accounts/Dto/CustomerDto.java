@@ -7,6 +7,15 @@ public class CustomerDto {
     private String email;
     private String mobileNumber;
 
+    private AccountDto accountDto;
+
+    public AccountDto getAccountDto() {
+        return accountDto;
+    }
+
+    public void setAccountDto(AccountDto accountDto) {
+        this.accountDto = accountDto;
+    }
 
     public String getName() {
         return name;

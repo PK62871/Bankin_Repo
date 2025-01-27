@@ -11,7 +11,7 @@ public class BaseEntity {
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
-    private String createBy;
+    private String createdBy;
 
 @Column(insertable = false)
     private LocalDateTime updatedAt;
@@ -25,12 +25,12 @@ public class BaseEntity {
         this.createdAt = createdAt;
     }
 
-    public String getCreateBy() {
-        return createBy;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     public LocalDateTime getUpdatedAt() {

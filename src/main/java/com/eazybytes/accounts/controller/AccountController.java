@@ -35,4 +35,23 @@ public class AccountController {
 
     }
 
+    @GetMapping("/fetch")
+    public ResponseEntity<CustomerDto> fetchAccount(@RequestParam String mobileNumber){
+
+        CustomerDto customerDto = iAccountService.fetchAccount(mobileNumber);
+
+        return ResponseEntity.status(HttpStatus.OK).body(customerDto);
+    }
+
+
+    @PutMapping("/update")
+    public ResponseEntity<ResponseDto> updateAccountsDetails(@RequestBody CustomerDto customerDto){
+        boolean updated = iAccountService.updateAccount(customerDto);
+
+        if(updated){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(AccountConstant.STATUS_200,AccountConstant.MESSAGE_200));
+        }else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(AccountConstant.STATUS_500,AccountConstant.MESSAGE_500));
+        }
+    }
 }

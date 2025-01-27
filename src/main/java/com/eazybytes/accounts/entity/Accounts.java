@@ -10,7 +10,7 @@ public class Accounts extends BaseEntity{
     private Long accountNumber;
     private String accountType;
     private String branchAddress;
-    private String customerId;
+    private Long customerId;
 
     public Long getAccountNumber() {
         return accountNumber;
@@ -36,11 +36,11 @@ public class Accounts extends BaseEntity{
         this.branchAddress = branchAddress;
     }
 
-    public String getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
+    public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
 }
